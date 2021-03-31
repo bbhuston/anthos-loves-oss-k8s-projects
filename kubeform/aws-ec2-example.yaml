@@ -1,0 +1,11 @@
+---
+apiVersion: aws.kubeform.com/v1alpha1
+kind: Instance
+metadata:
+  name: ec2-instance-001
+  namespace: kubeform
+spec:
+  ami: "ami-031551c947f46038e"
+  instanceType: "t3.micro"
+  providerRef:
+    name: aws
