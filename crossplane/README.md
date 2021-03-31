@@ -33,3 +33,19 @@ kubectl -n crossplane-system apply -f aws-secret.yaml
 ```
 kubectl -n crossplane-system apply -f provider-aws.yaml
 ```
+
+##### 4) Confirm that crossplane is running
+
+```
+kubectl -n crossplane-system get pods
+```
+
+##### 5) Optional: Create example EKS cluster
+
+```
+# NOTE: This requires the AWS IAM permissions listed in the example manifest!
+kubectl -n crossplane-system apply -f aws-eks-example.yaml
+
+# Confirm EKS cluster is healthy
+kubectl -n crossplane-system desribe Cluster eks-cluster-001
+```
