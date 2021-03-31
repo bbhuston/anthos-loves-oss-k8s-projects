@@ -1,3 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeform
 ---
 # Source: kubeform/templates/serviceaccount.yaml
 apiVersion: v1
@@ -222,7 +226,6 @@ spec:
             claimName: kubeform-statefiles
       securityContext:
         {}
-
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
