@@ -36,7 +36,7 @@ cat << EOF > gcp-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: gcp-secret
+  name: gcp-creds
 type: Opaque
 stringData:
   gcp-creds.json: |-

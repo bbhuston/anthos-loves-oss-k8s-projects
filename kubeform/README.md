@@ -3,6 +3,7 @@
 ##### 1) Install kubeform operator and CRDs
 
 ```
+kubectl create ns kubeform
 kubectl apply -f kubeform-v0.3.0.yaml -f aws-crds-0.3.0.yaml
 ```
 
@@ -24,6 +25,7 @@ data:
   region: <base64 encoded value of `us-east-1`>
   access_key: <base64 encoded AWS access key with EC2 IAM permissions>
   secret_key: <base64 encoded AWS secret key with EC2 IAM permissions>
+EOF
 
 ---
 apiVersion: v1
