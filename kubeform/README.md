@@ -41,6 +41,7 @@ type: Opaque
 data:
   # NOTE: Generate a seperate community license per cluster as per
   # these instructions: https://kubeform.cloud/docs/v2020.10.30/setup/install/community/
+  # Fill out this form to get a license sent to your email: https://license-issuer.appscode.com/
   key.txt: <Base64-encoded version of license key>
 EOF
 

@@ -1,10 +1,5 @@
-# Set the storgae class at the bottom of this file for pvc to be created
-# for BM set the storage class to local-shared
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kubeform
+# Final file with license and aws secret "tbd" in base64
+# All secrets running from ns kubeform
 ---
 # Source: kubeform/templates/serviceaccount.yaml
 apiVersion: v1
@@ -19,6 +14,23 @@ metadata:
     app.kubernetes.io/version: "v0.3.0"
     app.kubernetes.io/managed-by: Helm
 ---
+# Source: kubeform/templates/license.yaml
+# if license file is provided, then create a secret for license
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubeform-license
+  namespace: kubeform
+  labels:
+    helm.sh/chart: kubeform-v0.3.0
+    app.kubernetes.io/name: kubeform
+    app.kubernetes.io/instance: kubeform
+    app.kubernetes.io/version: "v0.3.0"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  key.txt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUR6RENDQXJTZ0F3SUJBZ0lJSDYyWjl1NkFva3N3RFFZSktvWklodmNOQVFFTEJRQXdKVEVXTUJRR0ExVUUKQ2hNTlFYQndjME52WkdVZ1NXNWpMakVMTUFrR0ExVUVBeE1DWTJFd0hoY05NakV3TXpNeE1Ua3pOak0yV2hjTgpNakl3TXpNeE1Ua3pOak0yV2pCcE1Sc3dHUVlEVlFRS0V4SnJkV0psWm05eWJTMWpiMjF0ZFc1cGRIa3hHekFaCkJnTlZCQXNURW10MVltVm1iM0p0TFdOdmJXMTFibWwwZVRFdE1Dc0dBMVVFQXhNa05EZG1aR1ZoT1dNdFptRTMKTWkwME16a3lMVGczWldNdE1EZ3pORGsxTURFeE0yUmtNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QQpNSUlCQ2dLQ0FRRUFyT0FJZWs4TU9kaEN6cmRqVTQrOFZucUoyWUtiRWRWT1RWd3BCZytiOFpYVndjeS8rNExECmdweDgxSVJzL0IwTVhZZmNuUlZZQmlaaSs4aHkxbmtnR1k0TnFXeU92Qm1keFRUbW92bzlUbUV0dFFZWVNHa1kKbS9ld0J5OWh4QVIzQkdxVWZiTFRlNjV0YTIzZVluOG1OWHNDMXlKVGgvUDdMNm5zbjd2c0I4VVhHSysrVElzMgoyY1hIMnZiZnpyUjB2UkI1bEhLbkMwQVpuVGp6SFF1RXE1T2RhVWdUSFpnTzZLY0ZQeEl1QWhCU2g5TTA0eUlqCkdBcTdFYkJMallSdGd1VU1sOUNpTlo5cnBCRllPTk1aaWRQUXdzSW1Sblg4SWI4MHJkTndkYzZrcC80cERsc3gKbFZLdjZUdmRtNy9ER1g2RGdRRlpuVGdwd0RFVDlLMCtBd0lEQVFBQm80RzdNSUc0TUE0R0ExVWREd0VCL3dRRQpBd0lGb0RBVEJnTlZIU1VFRERBS0JnZ3JCZ0VGQlFjREFqQ0JrQVlEVlIwUkJJR0lNSUdGZ2lRME4yWmtaV0U1Cll5MW1ZVGN5TFRRek9USXRPRGRsWXkwd09ETTBPVFV3TVRFelpHU0JPWFo2TFdGdWRHaHZjeTFpYlMxb2VXSnkKYVdReElEeDNhV3hzYVdGdExuUmxiWEJzWlVCMlpYSnBlbTl1ZDJseVpXeGxjM011WTI5dFBvRWlkMmxzYkdsaApiUzUwWlcxd2JHVkFkbVZ5YVhwdmJuZHBjbVZzWlhOekxtTnZiVEFOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBCmJTdGFTSE5hTThKZGVvRTBUcGg3ZzRrMDlSelhuMVlRenlsM04zVTZaeGhQSmNmOVJQdFRydk1iamhrQmY1Nk0KTDVjKzRVaTlZREF4ZmY5V2g2NHpMN2ZnZ2RlT21qQ2treHlOQ2RrTmRFSzJoaEZacjkzYzA2NVlZR0xibndGZwptOENER0lrZyswNVFuTlhtM05CaXU0RTJKL2QxVXorVXkwRjRMaE1MS2t0WnAyMjI1bnhiNUpnVWdMTUI0RTc3Cms3Z21lbkIxMm1zc2IxalBwN0RjT1BwU3BaVzgwY1E3OFB5a0tQSGFVODNIYnpFOCtINTVSU3YyakZhbmE4TVQKRjdNRExHeWx1Z0NTeDhnV25DbTlTRHQ0amJkMHVDUWN2d2NUU1J6S3FVRVIyRytaREFjRkx4V3FUZ0tRWjhuMApuWkhuN2xRcEFkSUJXeGxkcXBIbmdBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+---
 # Source: kubeform/templates/secret.yaml
 apiVersion: v1
 kind: Secret
@@ -32,7 +44,7 @@ metadata:
     app.kubernetes.io/version: "v0.3.0"
     app.kubernetes.io/managed-by: Helm
 data:
-  TF_STATE_ENC_KEY: "TlU4MFR6UjZhakppUlU5b1pqVjFVMWx5VjI0MVVUWTFUSEEyYWtGU2QxQT0="
+  TF_STATE_ENC_KEY: "ZDJSc2FUZDZaVkYxTVhkaFVYRkNVRWh4WTJKTlIzb3pVSG8wUjJvMmNHRT0="
 ---
 # Source: kubeform/templates/cluster-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -102,11 +114,6 @@ rules:
   resources:
   - pods
   verbs: ["get", "create", "list", "delete", "deletecollection"]
-- apiGroups:
-    - ""
-  resources:
-    - namespaces
-  verbs: ["get", "list"]
 - apiGroups:
   - ""
   resources:
@@ -217,28 +224,22 @@ spec:
         volumeMounts:
           - mountPath: /var/run/secrets/appscode/license
             name: license
-          - mountPath: /tmp/.kfc
-            name: kubeform-statefiles
       volumes:
         - name: license
           secret:
             defaultMode: 420
             secretName: kubeform-license
-        - name: kubeform-statefiles
-          persistentVolumeClaim:
-            claimName: kubeform-statefiles
       securityContext:
         {}
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: Secret
 metadata:
-  name: kubeform-statefiles
+  name: aws
   namespace: kubeform
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 5Gi
-#  storageClassName: standard
+type: kubeform.com/aws
+data:
+  # Note: Fill in these values with AWS access key information
+  region: dGJkCg==
+  access_key: dGJkCg==
+  secret_key: dGJkCg==
