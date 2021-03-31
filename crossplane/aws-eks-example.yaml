@@ -1,0 +1,439 @@
+---
+apiVersion: eks.aws.crossplane.io/v1beta1
+kind: Cluster
+metadata:
+  name: eks-cluster-001
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    roleArnRef:
+      name: power-user-role
+    resourcesVpcConfig:
+      publicAccessCidrs:
+      - 0.0.0.0/0
+      endpointPublicAccess: true
+      subnetIdRefs:
+      - name: "sample-subnet1"
+      - name: "sample-subnet2"
+      - name: "sample-subnet3"
+    version: "1.17"
+    tags:
+      crossplane-kind: cluster.eks.aws.crossplane.io
+      crossplane-name: eks-cluster-001
+      crossplane-providerconfig: providerconfig-aws
+      # Add Anthos GCP Project ID below in `proj-<Project ID>` format
+      mesh_id: proj-XX
+  writeConnectionSecretToRef:
+    name: cluster-conn
+    namespace: crossplane-system
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: eks.aws.crossplane.io/v1alpha1
+kind: NodeGroup
+metadata:
+  name: eks-cluster-001-node-group-01
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    scalingConfig:
+      desiredSize: 3
+      maxSize: 6
+      minSize: 1
+    subnetRefs:
+    - name: "sample-subnet1"
+    - name: "sample-subnet2"
+    - name: "sample-subnet3"
+    clusterNameRef:
+      name: eks-cluster-001
+    nodeRoleRef:
+      name: power-user-role
+  #    remoteAccess:
+  #      ec2SSHKey: "eks-node-group-key"
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: sample-subnet1
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    availabilityZone: us-east-1b
+    cidrBlock: 10.0.1.0/24
+    vpcIdRef:
+      name: sample-vpc
+    mapPublicIPOnLaunch: true
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: sample-subnet2
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    availabilityZone: us-east-1a
+    cidrBlock: 10.0.4.0/24
+    vpcIdRef:
+      name: sample-vpc
+    mapPublicIPOnLaunch: true
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: sample-subnet3
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    availabilityZone: us-east-1c
+    cidrBlock: 10.0.8.0/24
+    vpcIdRef:
+      name: sample-vpc
+    mapPublicIPOnLaunch: true
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: VPC
+metadata:
+  name: sample-vpc
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    cidrBlock: 10.0.0.0/16
+    enableDnsSupport: true
+    enableDnsHostNames: true
+    instanceTenancy: default
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha4
+kind: RouteTable
+metadata:
+  name: sample-routetable
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    routes:
+    - destinationCidrBlock: 0.0.0.0/0
+      gatewayIdRef:
+        name: sample-internetgateway
+    associations:
+    - subnetIdRef:
+        name: sample-subnet1
+    vpcIdRef:
+      name: sample-vpc
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha4
+kind: RouteTable
+metadata:
+  name: sample-routetable-002
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    routes:
+    - destinationCidrBlock: 0.0.0.0/0
+      gatewayIdRef:
+        name: sample-internetgateway
+    associations:
+    - subnetIdRef:
+        name: sample-subnet2
+    vpcIdRef:
+      name: sample-vpc
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha4
+kind: RouteTable
+metadata:
+  name: sample-routetable-003
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    routes:
+    - destinationCidrBlock: 0.0.0.0/0
+      gatewayIdRef:
+        name: sample-internetgateway
+    associations:
+    - subnetIdRef:
+        name: sample-subnet3
+    vpcIdRef:
+      name: sample-vpc
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: NATGateway
+metadata:
+  name: sample-natgateway
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    allocationIdRef:
+      name: sample-eip
+    subnetIdRef:
+      name: sample-subnet1
+    tags:
+    - key: Name
+      value: sample-natgateway
+  providerConfigRef:
+    name:  providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: NATGateway
+metadata:
+  name: sample-natgateway-002
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    allocationIdRef:
+      name: sample-eip-002
+    subnetIdRef:
+      name: sample-subnet2
+    tags:
+    - key: Name
+      value: sample-natgateway-002
+  providerConfigRef:
+    name:  providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: NATGateway
+metadata:
+  name: sample-natgateway-003
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    allocationIdRef:
+      name: sample-eip-003
+    subnetIdRef:
+      name: sample-subnet3
+    tags:
+    - key: Name
+      value: sample-natgateway-003
+  providerConfigRef:
+    name:  providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: InternetGateway
+metadata:
+  name: sample-internetgateway
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    vpcIdRef:
+      name: sample-vpc
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: ElasticIP
+metadata:
+  name: sample-eip
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    domain: "vpc"
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: ElasticIP
+metadata:
+  name: sample-eip-002
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    domain: "vpc"
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: ElasticIP
+metadata:
+  name: sample-eip-003
+  namespace: crossplane-system
+spec:
+  forProvider:
+    region: us-east-1
+    domain: "vpc"
+  providerConfigRef:
+    name: providerconfig-aws
+
+#---
+#apiVersion: ec2.aws.crossplane.io/v1beta1
+#kind: SecurityGroup
+#metadata:
+#  name: sample-cluster-sg
+#  namespace: crossplane-system
+#spec:
+#  forProvider:
+#    region: us-east-1
+#    vpcIdRef:
+#      name: sample-vpc
+#    groupName: sample-cluster-sg-goup
+#    description: Cluster communication with worker nodes
+#    ingress:
+#      - fromPort: 80
+#        toPort: 80
+#        ipProtocol: tcp
+#        ipRanges:
+#          - cidrIp: 192.168.0.0/32
+#  providerConfigRef:
+#    name: providerconfig-aws
+
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: sample-rolepolicyattachment
+  namespace: crossplane-system
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+    roleNameRef:
+      name: power-user-role
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: sample-rolepolicyattachment-002
+  namespace: crossplane-system
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+    roleNameRef:
+      name: power-user-role
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: sample-rolepolicyattachment-003
+  namespace: crossplane-system
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+    roleNameRef:
+      name: power-user-role
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: sample-rolepolicyattachment-004
+  namespace: crossplane-system
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEKSVPCResourceController
+    roleNameRef:
+      name: power-user-role
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: sample-rolepolicyattachment-005
+  namespace: crossplane-system
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+    roleNameRef:
+      name: power-user-role
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: sample-rolepolicyattachment-006
+  namespace: crossplane-system
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/SecretsManagerReadWrite
+    roleNameRef:
+      name: power-user-role
+  providerConfigRef:
+    name: providerconfig-aws
+
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRole
+metadata:
+  name: power-user-role
+  namespace: crossplane-system
+spec:
+  providerConfigRef:
+    name: providerconfig-aws
+  forProvider:
+    tags:
+    - key: k1
+      value: v1
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": [
+                        "ec2.amazonaws.com",
+                        "s3.amazonaws.com",
+                        "eks.amazonaws.com",
+                        "iam.amazonaws.com",
+                        "autoscaling.amazonaws.com"
+                  ]
+                },
+                "Action": [
+                    "sts:AssumeRole"
+                ]
+            }
+        ]
+      }
