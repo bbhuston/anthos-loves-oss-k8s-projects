@@ -22,9 +22,12 @@ metadata:
 type: kubeform.com/aws
 data:
   # Note: Fill in these values with AWS access key information
-  region: <base64 encoded value of `us-east-1`>
-  access_key: <base64 encoded AWS access key with EC2 IAM permissions>
-  secret_key: <base64 encoded AWS secret key with EC2 IAM permissions>
+`  #  Base64 encoded value of a regions, such as `us-east-1`
+  region: cmVwbGFjZW1lCg==
+  # Base64 encoded AWS access key with AWS IAM permissions
+  access_key: cmVwbGFjZW1lCg== 
+  # Base64 encoded AWS secret key with AWS IAM permissions
+  secret_key: cmVwbGFjZW1lCg==
 EOF
 
 ---
@@ -44,7 +47,8 @@ data:
   # NOTE: Generate a seperate community license per cluster as per
   # these instructions: https://kubeform.cloud/docs/v2020.10.30/setup/install/community/
   # Fill out this form to get a license sent to your email: https://license-issuer.appscode.com/
-  key.txt: <Base64-encoded version of license key>
+  # Value below needs to be a base64-encoded version of license key
+  key.txt: cmVwbGFjZW1lCg==
 EOF
 
 # Apply secrets

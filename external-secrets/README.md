@@ -15,8 +15,10 @@ cat << EOF > aws-secret.yaml
 apiVersion: v1
 data:
   # Need to generate AWS access key with AWS Secret Manager IAM permissions
-  id: <base64 encode AWS access key id>
-  key: <base64 encode AWS secret key>
+  # Base64 encode AWS access key id
+  id: cmVwbGFjZW1lCg==
+  # Base64 encode AWS secret key
+  key: cmVwbGFjZW1lCg==
 kind: Secret
 metadata:
   name: aws-credentials

@@ -22,8 +22,8 @@ metadata:
   namespace: crossplane-system
 type: Opaque
 data:
-  # Need base64 encoded secret
-  key: <base64 encoded of AWS account credentials from "aws configure" CLI command>
+  # Base64 encoded of AWS account credentials from "aws configure" CLI command
+  key: cmVwbGFjZW1lCg==
 EOF
 
 # Apply secret
