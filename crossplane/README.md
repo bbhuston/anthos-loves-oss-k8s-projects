@@ -5,7 +5,8 @@
 ```
 kubectl create ns crossplane-system
 kubectl -n crossplane-system apply -f meta-crds/
-kubectl -n crossplane-system apply -f crossplane-v0.14.0.yaml
+kubectl -n crossplane-system apply -f crossplane-v0.14.0.yaml -f meta-crds/providerconfigs-crds
+
 ```
 
 ##### 2) Install crossplane AWS secret
@@ -44,8 +45,12 @@ kubectl -n crossplane-system get pods
 
 ```
 # NOTE: This requires the AWS IAM permissions listed in the example manifest!
+# It also takes a few mintues for the Crossplane AWS CRDs to finish installing.
+# Please rerun the `kubectl apply` listed below if you encounter a missing CRD 
+# error message the first time you run the command.
+
 kubectl -n crossplane-system apply -f aws-eks-example.yaml
 
 # Confirm EKS cluster is healthy
-kubectl -n crossplane-system desribe Cluster eks-cluster-001
+kubectl -n crossplane-system describe Cluster eks-cluster-001
 ```
