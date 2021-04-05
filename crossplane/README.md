@@ -5,8 +5,7 @@
 ```
 kubectl create ns crossplane-system
 kubectl -n crossplane-system apply -f meta-crds/
-kubectl -n crossplane-system apply -f crossplane-v0.14.0.yaml -f meta-crds/providerconfigs-crds
-
+kubectl -n crossplane-system apply  -f meta-crds/providerconfigs-crds -f crossplane-v0.14.0.yaml
 ```
 
 ##### 2) Install crossplane AWS secret
