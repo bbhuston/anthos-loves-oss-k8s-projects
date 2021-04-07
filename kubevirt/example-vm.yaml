@@ -31,7 +31,8 @@ spec:
       volumes:
       - name: containerdisk
         containerDisk:
-          image: quay.io/kubevirt/cirros-container-disk-demo
+          # This is image recommended by Nanfang
+          image: kubevirt/cirros-registry-disk-demo
       - name: cloudinitdisk
         cloudInitNoCloud:
           userDataBase64: SGkuXG4=
