@@ -24,7 +24,7 @@
 #  hosts:
 #  - "<your-domain>"
 #  gateways:
-#  - public-gateway
+#  - <your gateway name>
 #  http:
 #  - route:
 #    - destination:

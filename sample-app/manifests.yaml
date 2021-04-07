@@ -491,7 +491,7 @@ spec:
 #        image: bbhuston/loadgenerator:v0.2.0-custom-https
         env:
         - name: FRONTEND_ADDR
-          value: "frontend:80"
+          value: "frontend.demo.svc.cluster.local:80"
 #        - name: FRONTEND_ADDR
 #          value: "<your-domain>:443"
         - name: USERS
