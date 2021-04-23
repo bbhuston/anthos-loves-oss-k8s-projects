@@ -18,7 +18,8 @@ spec:
     spec:
       containers:
         - name: nginx-1
-          image: nginx:1.7.9
+#           image: nginx:1.7.9
+          image: gcr.io/benhuston-identity-platform/nginx:1.7.9
           ports:
             - containerPort: 80
           livenessProbe:
