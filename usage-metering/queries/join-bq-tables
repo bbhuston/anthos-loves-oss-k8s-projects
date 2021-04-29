@@ -6,7 +6,7 @@ WITH
      pricesheet.rate,
      pricesheet.unit
    FROM
-     `benhuston-anthos.gke_usage_data2.gke_onprem_prices` AS pricesheet
+     `${BIGQUERY_PROJECT_ID}.${BIGQUERY_DATASET_ID}.${BIGQUERY_TABLE_NAME}` AS pricesheet
  ),
  request_based_cost_allocation AS (
  SELECT
@@ -26,7 +26,7 @@ WITH
    billing_table.rate * resource_usage.usage.amount AS cost,
    "request" AS type
  FROM
-   `benhuston-anthos.gke_usage_data2.gke_cluster_resource_usage` AS resource_usage
+   `${BIGQUERY_PROJECT_ID}.${BIGQUERY_DATASET_ID}.gke_cluster_resource_usage` AS resource_usage
  INNER JOIN
    billing_table
  ON
@@ -51,7 +51,7 @@ WITH
      billing_table.rate * resource_consumption.usage.amount AS cost,
      "consumption" AS type
    FROM
-     `benhuston-anthos.gke_usage_data2.gke_cluster_resource_consumption` AS resource_consumption
+     `${BIGQUERY_PROJECT_ID}.${BIGQUERY_DATASET_ID}.gke_cluster_resource_consumption` AS resource_consumption
    INNER JOIN
      billing_table
    ON
