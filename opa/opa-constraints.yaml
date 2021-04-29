@@ -1,0 +1,40 @@
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sContainerLimits
+metadata:
+ name: container-must-have-limits
+spec:
+ match:
+   kinds:
+     - apiGroups: [""]
+       kinds: ["Pod"]
+ parameters:
+   cpu: "200m"
+   memory: "1Gi"
+
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredProbes
+metadata:
+ name: must-have-probes
+spec:
+ match:
+   kinds:
+     - apiGroups: [""]
+       kinds: ["Pod"]
+ parameters:
+   probes: ["readinessProbe", "livenessProbe"]
+   probeTypes: ["tcpSocket", "httpGet", "exec"]
+
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: k8sResouceQuota
+metadata:
+  name: namespace-must-have-resourcequota
+spec:
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Pod"]
+    includedNamespaces:
+    - opa-resourcequota-example

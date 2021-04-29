@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: good-opa-example-with-limits-and-probes
+  namespace: opa-constraint-example
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-1
+#           image: nginx:1.7.9
+          image: gcr.io/benhuston-identity-platform/nginx:1.7.9
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+           limits:
+             cpu: "100m"
+             memory: "1Gi"
+          volumeMounts:
+            - mountPath: /tmp/cache
+              name: cache-volume
+      volumes:
+        - name: cache-volume
+          emptyDir: {}
