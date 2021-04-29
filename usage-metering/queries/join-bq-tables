@@ -1,0 +1,69 @@
+WITH
+ billing_table AS (
+   SELECT
+     IFNULL(pricesheet.sku_id, "") AS sku_id,
+     pricesheet.resource_name,
+     pricesheet.rate,
+     pricesheet.unit
+   FROM
+     `${BIGQUERY_PROJECT_ID}.${BIGQUERY_DATASET_ID}.${BIGQUERY_TABLE_NAME}` AS pricesheet
+ ),
+ request_based_cost_allocation AS (
+ SELECT
+   resource_usage.cluster_location,
+   resource_usage.cluster_name,
+   resource_usage.end_time,
+   resource_usage.labels,
+   resource_usage.namespace,
+   resource_usage.resource_name,
+   CASE
+     WHEN resource_usage.resource_name = 'cpu' THEN 'CPU requested'
+     WHEN resource_usage.resource_name = 'memory' THEN 'memory requested'
+   END AS resource_name_with_type_and_unit,
+   IFNULL(resource_usage.sku_id, "") AS sku_id,
+   resource_usage.start_time,
+   resource_usage.usage.amount AS amount,
+   billing_table.rate * resource_usage.usage.amount AS cost,
+   "request" AS type
+ FROM
+   `${BIGQUERY_PROJECT_ID}.${BIGQUERY_DATASET_ID}.gke_cluster_resource_usage` AS resource_usage
+ INNER JOIN
+   billing_table
+ ON
+   resource_usage.sku_id = billing_table.sku_id
+   AND resource_usage.resource_name = billing_table.resource_name
+ ),
+ consumption_based_cost_allocation AS (
+   SELECT
+     resource_consumption.cluster_location,
+     resource_consumption.cluster_name,
+     resource_consumption.end_time,
+     resource_consumption.labels,
+     resource_consumption.namespace,
+     resource_consumption.resource_name,
+     CASE
+       WHEN resource_consumption.resource_name = 'cpu' THEN 'CPU consumed'
+       WHEN resource_consumption.resource_name = 'memory' THEN 'memory consumed'
+     END AS resource_name_with_type_and_unit,
+     IFNULL(resource_consumption.sku_id, "") AS sku_id,
+     resource_consumption.start_time,
+     resource_consumption.usage.amount AS amount,
+     billing_table.rate * resource_consumption.usage.amount AS cost,
+     "consumption" AS type
+   FROM
+     `${BIGQUERY_PROJECT_ID}.${BIGQUERY_DATASET_ID}.gke_cluster_resource_consumption` AS resource_consumption
+   INNER JOIN
+     billing_table
+   ON
+     resource_consumption.sku_id = billing_table.sku_id
+     AND resource_consumption.resource_name = billing_table.resource_name
+ )
+ SELECT
+   *
+ FROM
+   request_based_cost_allocation
+ UNION ALL
+ SELECT
+   *
+ FROM
+   consumption_based_cost_allocation

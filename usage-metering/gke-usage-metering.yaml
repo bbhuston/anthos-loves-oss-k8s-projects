@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gke-usage-metering
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gke-usage-metering
+  template:
+    metadata:
+      labels:
+        app: gke-usage-metering
+      name: gke-usage-metering
+      namespace: kube-system
+    spec:
+      containers:
+      - args:
+        - --cluster-name=${CLUSTER_NAME} #FILLMEIN
+        - --bigquery-project-id=${BIGQUERY_PROJECT_ID} #FILLMEIN
+        - --bigquery-dataset-id=${BIGQUERY_DATASET_ID} #FILLMEIN
+        - --bigquery-table-id=gke_cluster_resource_usage
+        - --enabled-usage-recorders=pod,PodMetrics  #change this to pod,PodMetrics to enable consumption-based metering
+        - --proxy=${PROXY_URL}
+        - --enabled-exporters=bigquery
+        - --metrics-port=9099
+        - --persistent-dir=/tmp/gke-usage-metering
+        - --cluster-environment=on-prem
+        - --bigquery-consumption-table-id=gke_cluster_resource_consumption
+        command:
+        - /gke-resource-tracker
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/bq-creds/${GCP_SA_KEY_NAME} #FILLMEIN
+        image: gcr.io/gke-on-prem-release/gke-resource-tracker:v0.8.4 #Point this to the image in your private registry if you're using one.
+        imagePullPolicy: Always
+        name: gke-usage-metering
+        volumeMounts:
+        - mountPath: /tmp/gke-usage-metering
+          name: gke-usage-metering-local-storage
+        - mountPath: /etc/bq-creds
+          name: bq-creds
+          readOnly: true
+      imagePullSecrets:
+      - name: private-registry-creds
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccount: gke-usage-metering-sa
+      serviceAccountName: gke-usage-metering-sa
+      volumes:
+      - hostPath:
+          path: /tmp/gke-usage-metering
+          type: DirectoryOrCreate
+        name: gke-usage-metering-local-storage
+      - name: bq-creds
+        secret:
+          secretName: usage-metering-bigquery-service-account-key
