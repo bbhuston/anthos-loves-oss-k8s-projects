@@ -25,3 +25,16 @@ spec:
  parameters:
    probes: ["readinessProbe", "livenessProbe"]
    probeTypes: ["tcpSocket", "httpGet", "exec"]
+
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: k8sResouceQuota
+metadata:
+  name: namespace-must-have-resourcequota
+spec:
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Pod"]
+    includedNamespaces:
+    - opa-resourcequota-example

@@ -2,8 +2,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bad-opa-example-with-no-probes
-  namespace: opa-constraint-example
+  name: bad-opa-example-no-namespace-resource-quota
+  namespace: opa-resourcequota-example
   labels:
     app: nginx
 spec:
@@ -22,20 +22,20 @@ spec:
           image: gcr.io/benhuston-identity-platform/nginx:1.7.9
           ports:
             - containerPort: 80
-#           livenessProbe:
-#             tcpSocket:
-#               port: 80
-#             initialDelaySeconds: 5
-#             periodSeconds: 10
-#           readinessProbe:
-#             tcpSocket:
-#               port: 80
-#             initialDelaySeconds: 5
-#             periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
           resources:
-           limits:
-             cpu: "100m"
-             memory: "1Gi"
+            limits:
+              cpu: "100m"
+              memory: "1Gi"
           volumeMounts:
             - mountPath: /tmp/cache
               name: cache-volume
