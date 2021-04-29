@@ -60,7 +60,7 @@ kubectl -n opa-resourcequota-example get event
 kubectl apply -f resource-quota.yaml
 ```
 
-##### 10) AConfirm that the OPA admission controller stopped blocking this app
+##### 10) Confirm that the OPA admission controller stopped blocking this app
 ```
 kubectl -n opa-resourcequota-example get deployments
 kubectl -n opa-resourcequota-example get event
